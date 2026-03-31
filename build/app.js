@@ -254,22 +254,18 @@
 })(window);
 
 
-class Person {
-  constructor(naam, age) {
-  null;
-  naam = naam;
-  null;
-  age = age;
-  }
-  getInfo() {
-  return (((("Person: " + this.naam) + " (") + this.age) + " years)");
-  }
-  greet() {
-  return ("Hello, I am " + this.naam);
-  }
+let age = 25;
+let name = "Arjun";
+let isStudent = true;
+let scores = [85, 90, 78];
+console.log(("Name: " + name));
+console.log(("Age: " + age));
+console.log(("Is Student: " + isStudent));
+console.log(("Scores: " + scores));
+function calculateAge(birthYear) {
+  return (2025 - birthYear);
 }
-let person1 = new Person("Arjun", 25);
-console.log(person1.greet());
-console.log(person1.getInfo());
-let person2 = new Person("Priya", 23);
-console.log(person2.getInfo());
+let currentAge = calculateAge(2000);
+console.log(("Calculated Age: " + currentAge));
+let person = { "name": "Priya", "age": 23, "city": "Hyderabad" };
+console.log(person);

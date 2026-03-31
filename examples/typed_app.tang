@@ -1,0 +1,31 @@
+# Tanglish Type Annotations Example
+
+# Variables with type annotations
+idigo age: sankhya = 25 aipoindi
+idigo name: padamaala = "Arjun" aipoindi
+idigo isStudent: nijam_abaddam = nijam aipoindi
+idigo scores: lista = [85, 90, 78] aipoindi
+
+# Display values
+cheppu "Name: " + name aipoindi
+cheppu "Age: " + age aipoindi
+cheppu "Is Student: " + isStudent aipoindi
+cheppu "Scores: " + scores aipoindi
+
+# Functions with parameters
+pani calculateAge(birthYear: sankhya) {
+  pampu 2025 - birthYear aipoindi
+}
+
+# Usage
+idigo currentAge: sankhya = calculateAge(2000) aipoindi
+cheppu "Calculated Age: " + currentAge aipoindi
+
+# Object with typed fields
+idigo person: sambandhitam = {
+  name: "Priya",
+  age: 23,
+  city: "Hyderabad"
+} aipoindi
+
+cheppu person aipoindi

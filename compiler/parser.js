@@ -97,10 +97,17 @@ class Parser {
     return this.parseExprStatement();
   }
 
-  // idigo name = expr aipoindi
+  // idigo name [: type] = expr aipoindi
   parseVarDecl() {
     this.expect(TOKEN_TYPES.KEYWORD, 'idigo');
     const name = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+
+    // Optional type annotation: idigo x: sankhya = 5
+    let typeAnnotation = null;
+    if (this.check('COLON')) {
+      this.advance();
+      typeAnnotation = this.parseTypeAnnotation();
+    }
 
     let init = null;
     if (this.check(TOKEN_TYPES.EQUALS)) {
@@ -108,7 +115,7 @@ class Parser {
       init = this.parseExpression();
     }
     this.eatAipoindi();
-    return { type: 'VarDecl', name, init };
+    return { type: 'VarDecl', name, init, typeAnnotation };
   }
 
   // cheppu expr
@@ -425,12 +432,44 @@ class Parser {
   parseParams() {
     const params = [];
     if (this.check(TOKEN_TYPES.RPAREN)) return params;
-    params.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+
+    // Parse first param
+    const paramName = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+    // Skip optional type annotation
+    if (this.check('COLON')) {
+      this.advance();
+      this.parseTypeAnnotation();
+    }
+    params.push(paramName);
+
     while (this.check(TOKEN_TYPES.COMMA)) {
       this.advance();
-      params.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+      const name = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+      // Skip optional type annotation
+      if (this.check('COLON')) {
+        this.advance();
+        this.parseTypeAnnotation();
+      }
+      params.push(name);
     }
     return params;
+  }
+
+  parseTypeAnnotation() {
+    // Parse type like: sankhya, padamaala, nijam_abaddam, lista, sambandhitam
+    if (this.check(TOKEN_TYPES.IDENTIFIER)) {
+      const typeStr = this.advance().value;
+      // Map Telugu type names to their underlying types
+      const typeMap = {
+        'sankhya': 'number',
+        'padamaala': 'string',
+        'nijam_abaddam': 'boolean',
+        'lista': 'array',
+        'sambandhitam': 'object'
+      };
+      return typeMap[typeStr] || typeStr;
+    }
+    return null;
   }
 
   parseArgs() {
