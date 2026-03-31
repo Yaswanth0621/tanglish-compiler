@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TanglishScript App</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<section>
+  <h2>
+    0
+  </h2>
+  <div>
+    <button onclick="clearCalc()">
+      C
+    </button>
+    <button>
+      
+    </button>
+    <button>
+      
+    </button>
+    <div onclick="setOp("/")">
+      /
+    </div>
+  </div>
+  <div>
+    <button onclick="appendNum("7")">
+      7
+    </button>
+    <button onclick="appendNum("8")">
+      8
+    </button>
+    <button onclick="appendNum("9")">
+      9
+    </button>
+    <div onclick="setOp("*")">
+      X
+    </div>
+  </div>
+  <div>
+    <button onclick="appendNum("4")">
+      4
+    </button>
+    <button onclick="appendNum("5")">
+      5
+    </button>
+    <button onclick="appendNum("6")">
+      6
+    </button>
+    <div onclick="setOp("-")">
+      -
+    </div>
+  </div>
+  <div>
+    <button onclick="appendNum("1")">
+      1
+    </button>
+    <button onclick="appendNum("2")">
+      2
+    </button>
+    <button onclick="appendNum("3")">
+      3
+    </button>
+    <div onclick="setOp("+")">
+      +
+    </div>
+  </div>
+  <div>
+    <button onclick="appendNum("0")">
+      0
+    </button>
+    <button>
+      .
+    </button>
+    <div onclick="compute()">
+      =
+    </div>
+  </div>
+</section>
+  <script src="app.js"></script>
+</body>
+</html>

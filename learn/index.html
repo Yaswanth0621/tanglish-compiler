@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TanglishScript Masterclass — macOS 27 Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* macOS 27 Design System */
+  :root {
+    --mac-bg: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
+    --glass-bg: rgba(20, 20, 25, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    --accent: #5e5ce6;
+    --accent-glow: rgba(94, 92, 230, 0.4);
+    --text-main: #f5f5f7;
+    --text-dim: #98989d;
+    --red: #ff453a;
+    --yellow: #ffd60a;
+    --green: #32d74b;
+    --blur: blur(40px) saturate(180%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, "SF Pro Display", sans-serif; }
+  
+  body {
+    height: 100vh;
+    background: #000 var(--mac-bg) center/cover no-repeat;
+    color: var(--text-main);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; overflow: hidden;
+  }
+
+  .mac-window {
+    width: 100%; height: 100%; max-width: 1400px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    border-radius: 18px; border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: windowRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes windowRise {
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Toolbar */
+  .toolbar {
+    height: 54px; background: rgba(30,30,35,0.4); border-bottom: 1px solid var(--glass-border);
+    display: flex; align-items: center; padding: 0 16px; user-select: none;
+  }
+  .mac-controls { display: flex; gap: 8px; margin-right: 24px; }
+  .mac-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+  .mac-dot.close { background: var(--red); }
+  .mac-dot.min { background: var(--yellow); }
+  .mac-dot.max { background: var(--green); }
+  
+  .window-title { font-weight: 600; font-size: 0.9rem; }
+  .progress-wrap { flex: 1; max-width: 400px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #5e5ce6, #bf5af2); width: 0%; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
+  .progress-text { font-size: 0.8rem; font-weight: 700; color: #bf5af2; width: 40px; }
+
+  /* Workspace */
+  .workspace { display: flex; flex: 1; overflow: hidden; }
+  
+  /* Course Sidebar */
+  .sidebar {
+    width: 280px; background: rgba(0,0,0,0.15); border-right: 1px solid var(--glass-border);
+    display: flex; flex-direction: column; padding: 20px 16px; overflow-y: auto;
+  }
+  .lesson-item {
+    padding: 12px 16px; border-radius: 10px; cursor: pointer;
+    font-size: 0.9rem; font-weight: 500; color: var(--text-dim);
+    margin-bottom: 8px; transition: all 0.2s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .lesson-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+  .lesson-item.active { background: var(--accent); color: white; box-shadow: 0 4px 14px var(--accent-glow); }
+  .lesson-item.done .status { color: var(--green); }
+  .status { width: 20px; text-align: center; }
+
+  /* Main Content */
+  .content { flex: 1; display: flex; flex-direction: column; background: rgba(10,10,15,0.3); }
+  
+  .lesson-header { padding: 30px 40px; border-bottom: 1px solid var(--glass-border); }
+  .lesson-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+  .lesson-desc { font-size: 1rem; color: var(--text-dim); line-height: 1.6; max-width: 700px; }
+  
+  .editor-split { display: flex; flex: 1; overflow: hidden; }
+  
+  .code-pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); }
+  .pane-title { height: 36px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; padding: 0 16px; font-size: 0.8rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+  #editor { flex: 1; background: transparent; color: #f5f5f7; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 20px; border: none; outline: none; resize: none; line-height: 1.6; }
+  
+  .preview-pane { width: 400px; display: flex; flex-direction: column; background: rgba(0,0,0,0.2); }
+  #console-out { height: 40%; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; overflow: auto; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); }
+  #browser-view { flex: 1; border: none; background: #fff; width: 100%; margin: 0; padding: 0; }
+  
+  .action-bar { padding: 16px 20px; background: rgba(255,255,255,0.02); border-top: 1px solid var(--glass-border); display: flex; justify-content: flex-end; gap: 12px; }
+  
+  .mac-btn {
+    padding: 10px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05); color: white;
+  }
+  .mac-btn:hover { background: rgba(255,255,255,0.1); }
+  .mac-btn.primary { background: linear-gradient(135deg, #5e5ce6, #bf5af2); border: none; box-shadow: 0 4px 15px rgba(94, 92, 230, 0.4); }
+  .mac-btn.primary:hover { box-shadow: 0 6px 20px rgba(94, 92, 230, 0.6); transform: translateY(-1px); }
+  .mac-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Certificate Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    opacity: 0; pointer-events: none; transition: 0.4s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px;
+    padding: 40px; width: 500px; text-align: center; box-shadow: var(--glass-shadow);
+    transform: translateY(20px) scale(0.95); transition: 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+  .modal-input { width: 100%; padding: 14px 20px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; font-size: 1.1rem; margin: 24px 0; outline: none; transition: 0.2s; text-align: center; }
+  .modal-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+
+  /* Actual Certificate Viewer */
+  #cert-view {
+    display: none; position: fixed; inset: 0; background: #111; z-index: 2000;
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  #cert-view.show { display: flex; }
+  .cert-doc {
+    width: 900px; height: 640px; background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2670&auto=format&fit=crop') center/cover;
+    position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+    display: flex; flex-direction: column; align-items: center; padding: 60px;
+    text-align: center; border-radius: 8px; overflow: hidden;
+  }
+  .cert-doc::before { content: ''; position: absolute; inset: 10px; border: 2px solid rgba(255,255,255,0.2); border-radius: 4px; pointer-events: none; }
+  .cert-doc::after { content: ''; position: absolute; inset: 0; background: rgba(10,10,15,0.85); backdrop-filter: blur(10px); z-index: 0; }
+  .cert-content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; }
+  
+  .c-logo { font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,214,10,0.5); }
+  .c-title { font-family: 'SF Pro Display', serif; font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #ffd60a, #ff9f0a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 50px; }
+  .c-sub { font-size: 1.4rem; color: #ccc; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; }
+  .c-name { font-size: 4.5rem; font-weight: 700; color: white; border-bottom: 2px solid rgba(255,255,255,0.2); padding: 0 40px 10px; margin-bottom: 40px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .c-desc { font-size: 1.2rem; color: #aaa; max-width: 600px; line-height: 1.6; }
+  
+  .c-footer { margin-top: auto; display: flex; justify-content: space-between; width: 100%; padding: 0 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; }
+  .c-sig { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: #fff; }
+  .c-date { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #888; }
+  
+  .cert-actions { position: absolute; bottom: 40px; display: flex; gap: 20px; z-index: 10; }
+  /* Dictionary Modal */
+  .dict-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+  .dict-modal.show { display: flex; opacity: 1; }
+  .dict-container { width: 90vw; max-width: 1100px; height: 85vh; background: #111; padding: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+  .dict-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .dict-search { width: 100%; padding: 15px 20px; font-size: 1.1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; outline: none; transition: 0.2s; }
+  .dict-search:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); }
+  .dict-table-area { flex: 1; overflow-y: auto; padding-right: 10px; margin-top:20px; }
+  .dict-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .dict-table th { position: sticky; top: 0; background: #111; padding: 16px 12px; border-bottom: 2px solid rgba(255,255,255,0.1); color: var(--text-dim); z-index: 10; font-size:0.9rem; text-transform: uppercase; letter-spacing: 1px;}
+  .dict-table td { padding: 18px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+  .dict-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .dt-tanglish { font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size:1.15rem; }
+  .dt-map { font-family: 'JetBrains Mono', monospace; color: #ff9f0a; padding: 4px 8px; background: rgba(255, 159, 10, 0.1); border-radius: 6px; font-size: 0.9rem; white-space:nowrap;}
+  .dt-desc { color: var(--text-main); line-height: 1.5; font-size:0.95rem; }
+  .category-header { background: rgba(255,255,255,0.03); color: #888; padding: 10px 16px; margin-top: 24px; font-size: 0.75rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div class="mac-window">
+  <div class="toolbar">
+    <div class="mac-controls">
+      <div class="mac-dot close"></div>
+      <div class="mac-dot min"></div>
+      <div class="mac-dot max"></div>
+    </div>
+    <div class="window-title" style="margin-left: 10px;">TanglishScript Masterclass</div>
+    
+    <div style="flex:1"></div>
+    <button class="mac-btn" onclick="openDictionary()" style="margin-right:20px; font-weight: 700;">📚 Tanglish Dictionary Specification</button>
+    
+    <div class="progress-wrap" style="flex:0; min-width:200px">
+      <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+      <div class="progress-text" id="ptext">0%</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="sidebar" id="lesson-list">
+      <!-- Injected by JS -->
+    </div>
+
+    <div class="content">
+      <div class="lesson-header">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px">
+          <div class="lesson-title" id="ltitle" style="margin-bottom:0">Module 1: Hello World</div>
+          <div id="modeBadge" style="padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; background: rgba(94, 92, 230, 0.2); color: #bf5af2; border: 1px solid rgba(94, 92, 230, 0.5); display:flex; gap:8px; align-items:center;">
+            <span>👨‍🏫</span> Professor Mode
+          </div>
+        </div>
+        <div class="lesson-desc" id="ldesc">Learn the basics of printing to the console using TanglishScript.</div>
+      </div>
+      
+      <div class="editor-split">
+        <div class="code-pane">
+          <div class="pane-title">📝 main.tang</div>
+          <textarea id="editor" spellcheck="false"></textarea>
+        </div>
+        
+        <div class="preview-pane">
+          <div class="pane-title">🖥️ Console Output</div>
+          <div id="console-out"></div>
+          <div class="pane-title" style="background:rgba(255,255,255,0.05);color:#fff">🌐 Live Web Preview</div>
+          <iframe id="browser-view"></iframe>
+        </div>
+      </div>
+      
+      <div class="action-bar" style="justify-content: flex-start;">
+        <button class="mac-btn" id="runBtn" onclick="runCode()">▶ Run Example</button>
+        <div style="flex:1"></div>
+        <button class="mac-btn primary" id="switchBtn" onclick="startChallenge()" style="background: linear-gradient(135deg, #ff9f0a, #ff453a); box-shadow: 0 4px 15px rgba(255, 69, 58, 0.4);">Give me the Challenge ➔</button>
+        <button class="mac-btn primary" id="nextBtn" onclick="nextLesson()" disabled style="display:none">Next Lesson ➔</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Name Modal -->
+<div class="modal-overlay" id="nameModal">
+  <div class="modal-box">
+    <h2 style="font-size:2rem;margin-bottom:10px">🎓 Masterclass Complete!</h2>
+    <p style="color:var(--text-dim)">You have mastered TanglishScript 100%. Enter your name to generate your official certificate.</p>
+    <input type="text" id="certName" class="modal-input" placeholder="Enter Your Full Name" autocomplete="off">
+    <button class="mac-btn primary" style="width:100%;padding:14px;font-size:1.1rem;" onclick="generateCertificate()">Generate Certificate ✨</button>
+  </div>
+</div>
+
+<!-- Certificate Viewer -->
+<div id="cert-view">
+  <div class="cert-doc" id="certNode">
+    <div class="cert-content">
+      <div class="c-logo">🟡</div>
+      <div class="c-sub">Certificate of Completion</div>
+      <div class="c-title">TanglishScript Master</div>
+      <div class="c-name" id="docName">John Doe</div>
+      <div class="c-desc">Has successfully completed the 100% TanglishScript Masterclass, mastering the Telugu-English Web Language architecture, compilers, array structures, and UI generation.</div>
+      <div class="c-footer">
+        <div>
+          <div class="c-sig">Antigravity AI</div>
+          <div style="font-size:0.8rem;color:#666;margin-top:4px">AUTHOR & CREATOR</div>
+        </div>
+        <div style="text-align:right">
+          <div class="c-date" id="docDate">2026-03-29</div>
+          <div style="font-size:0.8rem;color:#666;margin-top:4px">ISSUE DATE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cert-actions">
+    <button class="mac-btn" onclick="document.getElementById('cert-view').classList.remove('show')">Close</button>
+    <button class="mac-btn primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+</div>
+
+<!-- Dictionary Modal -->
+<div class="dict-modal" id="dictModal">
+  <div class="dict-container">
+    <div class="dict-header">
+      <h2 style="font-size:2rem;">📚 TanglishScript Dictionary & API Reference</h2>
+      <button class="mac-btn" onclick="closeDictionary()">Esc / Close</button>
+    </div>
+    <input type="text" id="dictSearch" class="dict-search" placeholder="Search for a Tanglish keyword, operator, JS equivalent, or feature..." autocomplete="off" onkeyup="filterDict()">
+    <div class="dict-table-area">
+      <table class="dict-table">
+        <thead>
+          <tr>
+            <th width="25%">Tanglish Syntax</th>
+            <th width="20%">Meaning (Telugu)</th>
+            <th width="20%">Web Mapping</th>
+            <th width="35%">Description & Action</th>
+          </tr>
+        </thead>
+        <tbody id="dictBody">
+          <!-- Injected by app.js -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="tanglish_dictionary.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+# TanglishScript — Complete Website Example
+# This is the most complete demonstration of TanglishScript features.
+# Run: node tanglish-cli.js build examples/complete.tang
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# CSS STYLES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+alankaram * {
+    box-sizing = border-box aipoindi
+    margin = 0 aipoindi
+    padding = 0 aipoindi
+}
+
+alankaram body {
+    font = Inter, system-ui, sans-serif aipoindi
+    background = #0f0f1a aipoindi
+    color = #f0f0f0 aipoindi
+    min-height = 100vh aipoindi
+}
+
+alankaram header {
+    background = rgba(255,255,255,0.04) aipoindi
+    border = 0 0 1px 0 solid rgba(255,255,255,0.1) aipoindi
+    padding = 20px 40px aipoindi
+    display = flex aipoindi
+    align = center aipoindi
+    justify = space-between aipoindi
+}
+
+alankaram nav {
+    display = flex aipoindi
+    align = center aipoindi
+}
+
+alankaram h1 {
+    color = #f5a623 aipoindi
+    size = 1.8rem aipoindi
+    weight = 800 aipoindi
+}
+
+alankaram h2 {
+    color = #fff aipoindi
+    size = 2.5rem aipoindi
+    weight = 700 aipoindi
+    margin = 0 0 1rem aipoindi
+}
+
+alankaram h3 {
+    color = #f5a623 aipoindi
+    size = 1.3rem aipoindi
+    weight = 600 aipoindi
+}
+
+alankaram main {
+    max-width = 1100px aipoindi
+    margin = 0 auto aipoindi
+    padding = 60px 40px aipoindi
+}
+
+alankaram section {
+    margin = 0 0 60px aipoindi
+}
+
+alankaram p {
+    color = #999 aipoindi
+    size = 1.1rem aipoindi
+    line-height = 1.7 aipoindi
+}
+
+alankaram button {
+    background = linear-gradient(135deg,#f5a623,#e04e00) aipoindi
+    color = white aipoindi
+    border = none aipoindi
+    padding = 14px 32px aipoindi
+    radius = 10px aipoindi
+    size = 1rem aipoindi
+    weight = 600 aipoindi
+    cursor = pointer aipoindi
+    shadow = 0 4px 20px rgba(245,166,35,0.3) aipoindi
+    margin = 8px 4px aipoindi
+}
+
+alankaram input {
+    background = rgba(255,255,255,0.08) aipoindi
+    border = 1px solid rgba(255,255,255,0.15) aipoindi
+    radius = 8px aipoindi
+    padding = 12px 16px aipoindi
+    color = white aipoindi
+    size = 1rem aipoindi
+    width = 100% aipoindi
+    margin = 8px 0 aipoindi
+}
+
+alankaram div {
+    margin = 12px 0 aipoindi
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# HTML STRUCTURE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+petti header {
+    petti h1 {
+        raayi "🟡 TanglishScript"
+    }
+    petti nav {
+        petti button click ayithe scrollHome() {
+            raayi "Home"
+        }
+        petti button click ayithe scrollCalc() {
+            raayi "Calculator"
+        }
+        petti button click ayithe scrollAbout() {
+            raayi "About"
+        }
+    }
+}
+
+petti main {
+    petti section {
+        petti h2 {
+            raayi "Telugu-English Programming Language"
+        }
+        petti p {
+            raayi "TanglishScript — Telugu tho web develop cheyyandi. HTML, CSS, JavaScript anni oka language lo!"
+        }
+        petti div {
+            petti button click ayithe showDemo() {
+                raayi "Demo Chupinchu"
+            }
+            petti button click ayithe openDocs() {
+                raayi "Documentation"
+            }
+        }
+    }
+
+    petti section {
+        petti h3 {
+            raayi "🧮 Calculator"
+        }
+        petti div {
+            petti input {
+                raayi ""
+            }
+            petti input {
+                raayi ""
+            }
+            petti button click ayithe calculate() {
+                raayi "Add Cheyu"
+            }
+            petti button click ayithe calcMultiply() {
+                raayi "Multiply Cheyu"
+            }
+            petti h3 {
+                raayi "Result: 0"
+            }
+        }
+    }
+
+    petti section {
+        petti h3 {
+            raayi "📋 Counter"
+        }
+        petti div {
+            petti button click ayithe increment() {
+                raayi "+ Penchandi"
+            }
+            petti button click ayithe decrement() {
+                raayi "- Teesandi"
+            }
+            petti button click ayithe reset() {
+                raayi "Reset"
+            }
+            petti h2 {
+                raayi "0"
+            }
+        }
+    }
+
+    petti section {
+        petti h3 {
+            raayi "ℹ About TanglishScript"
+        }
+        petti p {
+            raayi "TanglishScript is a real programming language that compiles to HTML + CSS + JavaScript. Built for Telugu-speaking developers worldwide."
+        }
+    }
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# JAVASCRIPT LOGIC
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+idigo counterVal = 0 aipoindi
+
+pani increment() {
+    counterVal = counterVal + 1 aipoindi
+    cheppu counterVal
+    T.setText("h2:last-of-type", counterVal)
+}
+
+pani decrement() {
+    counterVal = counterVal - 1 aipoindi
+    T.setText("h2:last-of-type", counterVal)
+}
+
+pani reset() {
+    counterVal = 0 aipoindi
+    T.setText("h2:last-of-type", 0)
+}
+
+pani calculate() {
+    idigo a = parseFloat(document.querySelectorAll("input")[0].value) aipoindi
+    idigo b = parseFloat(document.querySelectorAll("input")[1].value) aipoindi
+    idigo sum = a + b aipoindi
+    cheppu sum
+    T.setText("h3:last-of-type", "Result: " + sum)
+}
+
+pani calcMultiply() {
+    idigo a = parseFloat(document.querySelectorAll("input")[0].value) aipoindi
+    idigo b = parseFloat(document.querySelectorAll("input")[1].value) aipoindi
+    idigo product = a * b aipoindi
+    T.setText("h3:last-of-type", "Result: " + product)
+}
+
+pani showDemo() {
+    cheppu "TanglishScript Demo!"
+    T.alert("TanglishScript ante -> Telugu tho coding cheyyadam!")
+}
+
+pani openDocs() {
+    cheppu "Docs open avutundi..."
+}
+
+pani scrollHome() {
+    window.scrollTo(0, 0)
+}
+
+pani scrollCalc() {
+    idigo el = document.querySelector("section:nth-child(2)") aipoindi
+    unte (el != null) {
+        el.scrollIntoView()
+    }
+}
+
+pani scrollAbout() {
+    idigo el = document.querySelector("section:last-child") aipoindi
+    unte (el != null) {
+        el.scrollIntoView()
+    }
+}

@@ -1,0 +1,60 @@
+# TanglishScript — Styles-Only Example
+# Run: node tanglish-cli.js build examples/style.tang
+
+alankaram body {
+    background = linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) aipoindi
+    font = Inter, sans-serif aipoindi
+    margin = 0 aipoindi
+    min-height = 100vh aipoindi
+    display = flex aipoindi
+    align = center aipoindi
+    justify = center aipoindi
+}
+
+alankaram h1 {
+    color = #e94560 aipoindi
+    size = 3rem aipoindi
+    weight = 800 aipoindi
+    margin = 0 0 1rem 0 aipoindi
+}
+
+alankaram h2 {
+    color = #0f3460 aipoindi
+    size = 1.5rem aipoindi
+}
+
+alankaram button {
+    background = #e94560 aipoindi
+    color = white aipoindi
+    border = none aipoindi
+    padding = 14px 32px aipoindi
+    radius = 50px aipoindi
+    size = 1rem aipoindi
+    cursor = pointer aipoindi
+    shadow = 0 4px 20px rgba(233,69,96,0.4) aipoindi
+}
+
+alankaram div {
+    background = rgba(255,255,255,0.05) aipoindi
+    border = 1px solid rgba(255,255,255,0.1) aipoindi
+    radius = 16px aipoindi
+    padding = 40px aipoindi
+    shadow = 0 8px 32px rgba(0,0,0,0.3) aipoindi
+}
+
+petti div {
+    petti h1 {
+        raayi "TanglishScript Styles"
+    }
+    petti h2 {
+        raayi "Glassmorphism Design"
+    }
+    petti button click ayithe clicked() {
+        raayi "Try It!"
+    }
+}
+
+pani clicked() {
+    cheppu "Button click chesav!"
+    T.animate("button", [{ transform: "scale(1)" }, { transform: "scale(0.95)" }, { transform: "scale(1)" }], { duration: 300 })
+}

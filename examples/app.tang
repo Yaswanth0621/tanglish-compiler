@@ -1,0 +1,122 @@
+# Student Portal Website — Full TanglishScript Example
+#
+# This file demonstrates all features of TanglishScript.
+# Run: node tanglish-cli.js build examples/app.tang
+
+# ─── CSS Styles ────────────────────────────────────────────────────────────────
+
+alankaram body {
+    font = Inter, sans-serif aipoindi
+    background = #0f0f1a aipoindi
+    color = #eee aipoindi
+    margin = 0 aipoindi
+    padding = 20px aipoindi
+}
+
+alankaram h1 {
+    color = #f5a623 aipoindi
+    size = 2.5rem aipoindi
+    weight = 700 aipoindi
+}
+
+alankaram p {
+    color = #aaa aipoindi
+    size = 1.1rem aipoindi
+}
+
+alankaram button {
+    background = #f5a623 aipoindi
+    color = #0f0f1a aipoindi
+    border = none aipoindi
+    padding = 12px 28px aipoindi
+    radius = 8px aipoindi
+    size = 1rem aipoindi
+    weight = 600 aipoindi
+    cursor = pointer aipoindi
+}
+
+alankaram div {
+    margin = 20px 0 aipoindi
+}
+
+# ─── HTML Structure ────────────────────────────────────────────────────────────
+
+petti div {
+    petti h1 {
+        raayi "Student Portal"
+    }
+
+    petti p {
+        raayi "TanglishScript tho build chesina website!"
+    }
+
+    petti button click ayithe showWelcome() {
+        raayi "Welcome Cheppu"
+    }
+
+    petti button click ayithe showCount() {
+        raayi "Count Add Cheyu"
+    }
+
+    petti button click ayithe resetCount() {
+        raayi "Reset"
+    }
+
+    petti div {
+        petti p {
+            raayi ""
+        }
+    }
+}
+
+# ─── JavaScript Logic ──────────────────────────────────────────────────────────
+
+idigo count = 0 aipoindi
+
+pani showWelcome() {
+    cheppu "Welcome to TanglishScript!"
+    T.alert("TanglishScript lo Welcome!")
+    aipoindi
+}
+
+pani showCount() {
+    count = count + 1 aipoindi
+    cheppu count
+    T.setText("p:last-of-type", "Count: " + count)
+    aipoindi
+}
+
+pani resetCount() {
+    count = 0 aipoindi
+    T.setText("p:last-of-type", "Count reset to 0")
+    aipoindi
+}
+
+# ─── Loop Example ──────────────────────────────────────────────────────────────
+
+pani printNumbers() {
+    malli (idigo i = 1; i <= 5; i++) {
+        cheppu i
+    }
+}
+
+printNumbers()
+
+# ─── If-Else Example ───────────────────────────────────────────────────────────
+
+idigo age = 20 aipoindi
+
+unte (age > 18) {
+    cheppu "Major — Vote Cheyyochu!"
+} lekapothe {
+    cheppu "Minor — Wait Cheyyali"
+}
+
+# ─── Function with Return ──────────────────────────────────────────────────────
+
+pani add(a, b) {
+    pampu a + b aipoindi
+}
+
+idigo result = add(10, 25) aipoindi
+cheppu result

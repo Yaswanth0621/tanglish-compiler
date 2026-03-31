@@ -1,0 +1,6 @@
+# Testing Arrays and Objects
+idigo list = [1, 2, 3] aipoindi
+idigo user = { name: "Raja", age: 30 } aipoindi
+
+cheppu list[0]
+cheppu user.name

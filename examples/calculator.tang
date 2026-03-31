@@ -1,0 +1,88 @@
+# Modern Calculator
+
+idigo currentVal = "0" aipoindi
+idigo operator = "" aipoindi
+idigo storedVal = "0" aipoindi
+
+pani appendNum(num) {
+  unte (currentVal == "0") {
+    currentVal = num aipoindi
+  } lekapothe {
+    currentVal = currentVal + num aipoindi
+  }
+  updateDisplay()
+}
+
+pani setOp(op) {
+  storedVal = currentVal aipoindi
+  operator = op aipoindi
+  currentVal = "0" aipoindi
+}
+
+pani compute() {
+  idigo a = storedVal * 1 aipoindi
+  idigo b = currentVal * 1 aipoindi
+  idigo res = 0 aipoindi
+  
+  unte (operator == "+") { res = a + b aipoindi }
+  unte (operator == "-") { res = a - b aipoindi }
+  unte (operator == "*") { res = a * b aipoindi }
+  unte (operator == "/") { res = a / b aipoindi }
+  
+  # Return back to string to prevent coercion bugs
+  currentVal = res + "" aipoindi
+  operator = "" aipoindi
+  updateDisplay()
+}
+
+pani clearCalc() {
+  currentVal = "0" aipoindi
+  storedVal = "0" aipoindi
+  operator = "" aipoindi
+  updateDisplay()
+}
+
+pani updateDisplay() {
+  T.setText("h2", currentVal)
+}
+
+alankaram body { background = #222 aipoindi color = white aipoindi display = flex aipoindi justify = center aipoindi align = center aipoindi height = 100vh aipoindi font-family = sans-serif aipoindi margin = 0 aipoindi }
+alankaram section { background = rgba(255,255,255,0.05) aipoindi padding = 20px aipoindi radius = 20px aipoindi border = 1px solid rgba(255,255,255,0.1) aipoindi width = 320px aipoindi }
+alankaram h2 { background = #111 aipoindi color = #32d74b aipoindi font-size = 3rem aipoindi padding = 20px aipoindi text-align = right aipoindi radius = 10px aipoindi margin-bottom = 20px aipoindi margin-top = 0 aipoindi overflow = hidden aipoindi text-shadow = 0 0 10px rgba(50,215,75,0.5) aipoindi }
+alankaram div { display = flex aipoindi gap = 10px aipoindi margin-bottom = 10px aipoindi }
+alankaram button { flex = 1 aipoindi padding = 20px aipoindi font-size = 1.5rem aipoindi border = none aipoindi radius = 10px aipoindi background = rgba(255,255,255,0.1) aipoindi color = white aipoindi cursor = pointer aipoindi font-weight = bold aipoindi }
+alankaram i { background = #007aff aipoindi color = white aipoindi display = flex aipoindi justify = center aipoindi align = center aipoindi flex = 1 aipoindi radius = 10px aipoindi cursor = pointer aipoindi font-style = normal aipoindi font-size = 1.5rem aipoindi font-weight = bold aipoindi }
+
+petti section {
+  petti h2 { raayi "0" }
+  
+  petti div {
+    petti button click ayithe clearCalc() { raayi "C" }
+    petti button { raayi "" }
+    petti button { raayi "" }
+    petti i click ayithe setOp("/") { raayi "/" }
+  }
+  petti div {
+    petti button click ayithe appendNum("7") { raayi "7" }
+    petti button click ayithe appendNum("8") { raayi "8" }
+    petti button click ayithe appendNum("9") { raayi "9" }
+    petti i click ayithe setOp("*") { raayi "X" }
+  }
+  petti div {
+    petti button click ayithe appendNum("4") { raayi "4" }
+    petti button click ayithe appendNum("5") { raayi "5" }
+    petti button click ayithe appendNum("6") { raayi "6" }
+    petti i click ayithe setOp("-") { raayi "-" }
+  }
+  petti div {
+    petti button click ayithe appendNum("1") { raayi "1" }
+    petti button click ayithe appendNum("2") { raayi "2" }
+    petti button click ayithe appendNum("3") { raayi "3" }
+    petti i click ayithe setOp("+") { raayi "+" }
+  }
+  petti div {
+    petti button click ayithe appendNum("0") { raayi "0" }
+    petti button { raayi "." }
+    petti i click ayithe compute() { raayi "=" }
+  }
+}

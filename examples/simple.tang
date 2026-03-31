@@ -1,0 +1,19 @@
+# Simple TanglishScript Test
+# This will compile to HTML/JS
+
+petti div {
+    petti h1 {
+        raayi "Hello, World! I am a simple TanglishScript."
+    }
+    petti p {
+        raayi "Idhi simple test code."
+    }
+    petti button click ayithe sayHello() {
+        raayi "Click Me"
+    }
+}
+
+pani sayHello() {
+    cheppu "Button nukkav!"
+    T.alert("Simple code works!")
+}

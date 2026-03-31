@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TanglishScript Pro Studio</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+
+<style>
+/* Premium Glassmorphism 3-Column Workspace */
+:root {
+  --mac-bg: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
+  --glass-bg: rgba(20, 20, 30, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+  
+  --pane-bg: rgba(10, 10, 15, 0.55);
+  --accent: #5e5ce6;
+  --accent-glow: 0 0 20px rgba(94, 92, 230, 0.4);
+  
+  --text-main: #f5f5f7;
+  --text-dim: #9da0ab;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --blur: blur(50px) saturate(200%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  background: #000 var(--mac-bg) center/cover no-repeat;
+  color: var(--text-main);
+  overflow: hidden;
+  display: flex;
+  align-items: center; justify-content: center;
+  padding: 30px;
+}
+
+.mac-window {
+  width: 100%; height: 100%; max-width: 1800px;
+  background: var(--glass-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border-radius: var(--radius-lg); border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: windowRise 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes windowRise { 0% { opacity: 0; transform: translateY(30px) scale(0.97); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* TOP BAR */
+.top-bar {
+  height: 52px; display: flex; align-items: center; padding: 0 24px;
+  border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2);
+}
+.mac-controls { display: flex; gap: 8px; width: 220px; }
+.mac-dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+.mac-dot.close { background: #ff453a; } .mac-dot.min { background: #ffd60a; } .mac-dot.max { background: #32d74b; }
+
+.app-title { flex: 1; text-align: center; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; color: var(--text-main); text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.top-actions { width: 220px; display: flex; justify-content: flex-end; }
+
+/* LAYOUT GRID */
+.workspace { display: flex; flex: 1; overflow: hidden; }
+
+/* 1. LEFT PANE: EXPLORER (20%) */
+.explorer-pane { width: 260px; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; background: rgba(0,0,0,0.15); }
+.pane-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.pane-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; }
+.icon-btn { cursor: pointer; color: var(--text-dim); transition: 0.2s; background: transparent; border: none; font-size: 1.1rem; }
+.icon-btn:hover { color: var(--text-main); transform: scale(1.1); }
+
+.file-tree { padding: 12px; overflow-y: auto; flex: 1; }
+.file-item { padding: 10px 14px; margin-bottom: 6px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 0.85rem; transition: 0.2s; color: var(--text-dim); }
+.file-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+.file-item.active { background: rgba(255,255,255,0.1); color: var(--text-main); font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.file-icon { font-size: 1.1rem; }
+
+/* 2. CENTER PANE: CODE (45%) */
+.editor-pane { flex: 1; display: flex; flex-direction: column; background: var(--pane-bg); position: relative; }
+.editor-header { height: 60px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid var(--glass-border); justify-content: space-between; }
+.tabs { display: flex; gap: 4px; }
+.tab { padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; color: var(--text-dim); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+.tab:hover { background: rgba(255,255,255,0.05); }
+.tab.active { background: rgba(255,255,255,0.1); color: var(--text-main); }
+.tab-close { opacity: 0; transition: 0.2s; padding: 2px; }
+.tab:hover .tab-close { opacity: 0.6; } .tab-close:hover { opacity: 1; }
+
+.run-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.3s; box-shadow: var(--accent-glow); display: flex; align-items: center; gap: 8px; }
+.run-btn:hover { transform: translateY(-1px); filter: brightness(1.2); box-shadow: 0 0 25px rgba(94,92,230,0.6); }
+
+.editor-container { flex: 1; position: relative; }
+.CodeMirror { position: absolute; top:0; bottom:0; left:0; right:0; height: 100%; background: transparent !important; font-family: 'JetBrains Mono', monospace; font-size: 15px; padding: 10px 0; }
+.CodeMirror-gutters { background: rgba(0,0,0,0.2) !important; border-right: 1px solid rgba(255,255,255,0.05) !important; }
+
+/* 3. RIGHT PANE: OUTPUT & AI (35%) */
+.output-pane { width: 450px; display: flex; flex-direction: column; border-left: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); }
+.output-header { height: 60px; padding: 0 16px; display: flex; align-items: center; border-bottom: 1px solid var(--glass-border); }
+
+.segmented-control { display: flex; background: rgba(0,0,0,0.4); border-radius: 8px; padding: 4px; width: 100%; border: 1px solid rgba(255,255,255,0.05); }
+.segment { flex: 1; text-align: center; padding: 8px 0; font-size: 0.8rem; font-weight: 600; color: var(--text-dim); cursor: pointer; border-radius: 6px; transition: 0.2s; }
+.segment:hover { color: var(--text-main); }
+.segment.active { background: rgba(255,255,255,0.15); color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+.output-content { flex: 1; position: relative; overflow: hidden; }
+.o-view { position: absolute; top:0; left:0; right:0; bottom:0; padding: 20px; display: none; overflow-y: auto; flex-direction: column;}
+.o-view.active { display: flex; }
+
+/* View: Terminal */
+#view-term { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #a8aab0; }
+.log-row { margin-bottom: 12px; display: flex; gap: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.2); }
+.log-lbl { font-weight: 700; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; height:max-content;}
+.log-lbl.ok { background: rgba(50,215,75,0.15); color: #32d74b; }
+.log-lbl.err { background: rgba(255,69,58,0.15); color: #ff453a; }
+.log-lbl.info { background: rgba(94,92,230,0.15); color: var(--accent); }
+
+/* View: Browser */
+#view-web { padding: 0; background: #fff; }
+#preview-frame { width: 100%; height: 100%; border: none; }
+
+/* View: Local AI Agent */
+#view-ai { display: none; flex-direction: column; padding: 0; }
+#view-ai.active { display: flex; }
+.ai-header { padding: 15px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--glass-border); font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;}
+.ai-mem-badge { background: rgba(50,215,75,0.2); color: #32d74b; padding: 4px 8px; border-radius: 12px; font-weight: 600; font-size: 0.7rem; box-shadow: 0 0 10px rgba(50,215,75,0.3);}
+.ai-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+.msg { padding: 14px 18px; border-radius: 12px; font-size: 0.9rem; line-height: 1.5; max-width: 90%; }
+.msg.ai { background: rgba(255,255,255,0.05); align-self: flex-start; border-top-left-radius: 2px; border: 1px solid rgba(255,255,255,0.05); }
+.msg.user { background: var(--accent); align-self: flex-end; border-top-right-radius: 2px; color: white; box-shadow: 0 4px 15px rgba(94,92,230,0.3); }
+.ai-input-zone { padding: 16px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); }
+.ai-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 14px 20px; border-radius: 24px; color: white; font-family: inherit; font-size: 0.9rem; outline: none; transition: 0.3s; }
+.ai-input:focus { background: rgba(255,255,255,0.1); border-color: var(--accent); box-shadow: var(--accent-glow); }
+
+/* TOAST */
+#toast { position: absolute; bottom: 40px; right: 40px; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); padding: 14px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 0.9rem; font-weight: 500; opacity: 0; transform: translateY(20px); transition: 0.4s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 999; }
+#toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="mac-window">
+  
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="mac-controls">
+      <div class="mac-dot close"></div>
+      <div class="mac-dot min"></div>
+      <div class="mac-dot max"></div>
+    </div>
+    <div class="app-title">Pro Studio IDE</div>
+    <div class="top-actions">
+       <button class="icon-btn" title="Save Project" onclick="saveProject()">💾</button>
+    </div>
+  </div>
+  
+  <div class="workspace">
+    
+    <!-- 1. EXPLORER (LEFT) -->
+    <div class="explorer-pane">
+       <div class="pane-header">
+          <div class="pane-title">Virtual Space</div>
+          <button class="icon-btn" onclick="createNewFile()">+</button>
+       </div>
+       <div class="file-tree" id="fileTree">
+          <!-- Injected via ide.js -->
+       </div>
+    </div>
+
+    <!-- 2. EDITOR (CENTER) -->
+    <div class="editor-pane">
+       <div class="editor-header">
+          <div class="tabs" id="tabsArea">
+             <!-- Injected via ide.js -->
+          </div>
+          <button class="run-btn" onclick="compile()">▶ Run Build</button>
+       </div>
+       <div class="editor-container">
+          <textarea id="editor"></textarea>
+       </div>
+    </div>
+
+    <!-- 3. OUTPUT & AI (RIGHT) -->
+    <div class="output-pane">
+       <div class="output-header">
+          <div class="segmented-control">
+             <div class="segment" id="seg-web" onclick="switchRightPane('web')">🌍 App</div>
+             <div class="segment active" id="seg-term" onclick="switchRightPane('term')">>_ Logs</div>
+             <div class="segment" id="seg-ai" onclick="switchRightPane('ai')">🤖 AI Agent</div>
+          </div>
+       </div>
+       
+       <div class="output-content">
+          <!-- Live Browser -->
+          <div class="o-view" id="view-web">
+             <iframe id="preview-frame"></iframe>
+          </div>
+          
+          <!-- Terminal / Logs -->
+          <div class="o-view active" id="view-term">
+             <div style="color:var(--text-dim); margin-bottom:16px;">System Ready. Runtime V1.0 initialized.</div>
+          </div>
+          
+          <!-- Local AI Agent (1GB) -->
+          <div class="o-view" id="view-ai">
+             <div class="ai-header">
+                <span style="font-weight:600; color:var(--text-main);">Tanglish Local Brain</span>
+                <span class="ai-mem-badge" id="ai-mem-badge">Memory: Connecting...</span>
+             </div>
+             <div class="ai-messages" id="ai-chat-box">
+                <div class="msg ai">
+                   <strong>Agent Activated!</strong><br>
+                   I am the Local Tanglish AI. My memory bank (up to 1GB IndexedDB) tracks everything you write.
+                   Ask me "how to make a button" or "find error"!
+                </div>
+             </div>
+             <div class="ai-input-zone">
+                <input type="text" id="ai-prompt" class="ai-input" placeholder="Ask your local AI..." onkeydown="handleAiInput(event)">
+             </div>
+          </div>
+       </div>
+    </div>
+
+  </div> <!-- workspace -->
+</div> <!-- mac-window -->
+
+<div id="toast">✅ Success</div>
+
+<!-- CodeMirror JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/mode/simple.min.js"></script>
+<script src="ide.js"></script>
+</body>
+</html>
