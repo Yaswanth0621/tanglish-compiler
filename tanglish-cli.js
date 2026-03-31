@@ -12,6 +12,7 @@ const path = require('path');
 const { Lexer } = require('./compiler/lexer');
 const { Parser } = require('./compiler/parser');
 const { Transpiler } = require('./compiler/transpiler');
+const { NodeTranspiler } = require('./compiler/transpiler_node');
 
 const RESET  = '\x1b[0m';
 const BOLD   = '\x1b[1m';
@@ -36,7 +37,7 @@ function warn(msg)    { console.log(`${YELLOW}  ⚠  ${RESET}${msg}`); }
 function error(msg)   { console.log(`${RED}  ✗  ${RESET}${msg}`); }
 function label(msg)   { console.log(`${MAGENTA}${BOLD}${msg}${RESET}`); }
 
-function compile(sourceFile) {
+function compile(sourceFile, platform = 'browser') {
   const source = fs.readFileSync(sourceFile, 'utf-8');
   info(`Reading: ${sourceFile}`);
 
@@ -63,65 +64,106 @@ function compile(sourceFile) {
   }
 
   // Transpile
-  const transpiler = new Transpiler(ast);
   let result;
   try {
-    result = transpiler.transpile();
-    success(`Transpiled: HTML=${result.html.length}B, CSS=${result.css.length}B, JS=${result.js.length}B`);
+    if (platform === 'node') {
+      const transpiler = new NodeTranspiler(ast);
+      const jsCode = transpiler.transpile();
+      result = { js: jsCode, html: '', css: '' };
+      success(`Transpiled for Node.js: JS=${result.js.length}B`);
+    } else {
+      const transpiler = new Transpiler(ast);
+      result = transpiler.transpile();
+      success(`Transpiled: HTML=${result.html.length}B, CSS=${result.css.length}B, JS=${result.js.length}B`);
+    }
   } catch (e) {
     error(`Transpiler error: ${e.message}`);
     process.exit(1);
   }
 
-  return { source, ast, ...result };
+  return { source, ast, ...result, platform };
 }
 
-function buildCommand(sourceFile, outDir) {
+function buildCommand(sourceFile, outDir, platform = 'browser') {
   banner();
   label('▶ BUILDING...\n');
 
-  if (!sourceFile) { error('Usage: tanglish-cli.js build <file.tang> [outDir]'); process.exit(1); }
+  if (!sourceFile) { error('Usage: tanglish-cli.js build <file.tang> [outDir] [--platform node]'); process.exit(1); }
   if (!fs.existsSync(sourceFile)) { error(`File not found: ${sourceFile}`); process.exit(1); }
 
-  const result = compile(sourceFile);
+  const result = compile(sourceFile, platform);
   const outputDirectory = outDir || path.join(path.dirname(sourceFile), '..', 'build');
 
   // Ensure build directory exists
   fs.mkdirSync(outputDirectory, { recursive: true });
 
-  // Write runtime into build
-  const runtimeSrc = path.join(__dirname, 'runtime', 'browser.js');
-  let runtimeCode = '';
-  if (fs.existsSync(runtimeSrc)) {
-    runtimeCode = fs.readFileSync(runtimeSrc, 'utf-8');
+  if (platform === 'node') {
+    // Generate Node.js server output
+    const serverFile = path.join(outputDirectory, 'server.js');
+    const pkgFile = path.join(outputDirectory, 'package.json');
+
+    fs.writeFileSync(serverFile, result.js, 'utf-8');
+
+    // Generate package.json if it doesn't exist
+    if (!fs.existsSync(pkgFile)) {
+      const pkg = {
+        name: path.basename(sourceFile, '.tang') + '-server',
+        version: '1.0.0',
+        description: 'TanglishScript Node.js Server',
+        main: 'server.js',
+        scripts: { start: 'node server.js' },
+        dependencies: { express: '^4.18.0' },
+        author: 'TanglishScript',
+        license: 'MIT'
+      };
+      fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2), 'utf-8');
+    }
+
+    console.log('');
+    label('▶ OUTPUT\n');
+    success(`server.js       →  ${serverFile}`);
+    success(`package.json    →  ${pkgFile}`);
+    console.log('');
+    console.log(`${GREEN}${BOLD}Build complete! To run the server:${RESET}`);
+    console.log(`  cd ${outputDirectory}`);
+    console.log(`  npm install`);
+    console.log(`  npm start\n`);
+  } else {
+    // Generate browser output (original behavior)
+    // Write runtime into build
+    const runtimeSrc = path.join(__dirname, 'runtime', 'browser.js');
+    let runtimeCode = '';
+    if (fs.existsSync(runtimeSrc)) {
+      runtimeCode = fs.readFileSync(runtimeSrc, 'utf-8');
+    }
+
+    // Write files
+    const htmlFile = path.join(outputDirectory, 'index.html');
+    const cssFile  = path.join(outputDirectory, 'style.css');
+    const jsFile   = path.join(outputDirectory, 'app.js');
+
+    fs.writeFileSync(htmlFile, result.html, 'utf-8');
+    fs.writeFileSync(cssFile,  result.css || '/* No styles defined */', 'utf-8');
+    fs.writeFileSync(jsFile,   (runtimeCode ? runtimeCode + '\n\n' : '') + (result.js || '// No scripts defined'), 'utf-8');
+
+    console.log('');
+    label('▶ OUTPUT\n');
+    success(`index.html  →  ${htmlFile}`);
+    success(`style.css   →  ${cssFile}`);
+    success(`app.js      →  ${jsFile}`);
+    console.log('');
+    console.log(`${GREEN}${BOLD}Build complete! Open ${path.join(outputDirectory, 'index.html')} in your browser.${RESET}\n`);
   }
-
-  // Write files
-  const htmlFile = path.join(outputDirectory, 'index.html');
-  const cssFile  = path.join(outputDirectory, 'style.css');
-  const jsFile   = path.join(outputDirectory, 'app.js');
-
-  fs.writeFileSync(htmlFile, result.html, 'utf-8');
-  fs.writeFileSync(cssFile,  result.css || '/* No styles defined */', 'utf-8');
-  fs.writeFileSync(jsFile,   (runtimeCode ? runtimeCode + '\n\n' : '') + (result.js || '// No scripts defined'), 'utf-8');
-
-  console.log('');
-  label('▶ OUTPUT\n');
-  success(`index.html  →  ${htmlFile}`);
-  success(`style.css   →  ${cssFile}`);
-  success(`app.js      →  ${jsFile}`);
-  console.log('');
-  console.log(`${GREEN}${BOLD}Build complete! Open ${path.join(outputDirectory, 'index.html')} in your browser.${RESET}\n`);
 }
 
-function checkCommand(sourceFile) {
+function checkCommand(sourceFile, platform = 'browser') {
   banner();
   label('▶ CHECKING...\n');
 
   if (!sourceFile) { error('Usage: tanglish-cli.js check <file.tang>'); process.exit(1); }
   if (!fs.existsSync(sourceFile)) { error(`File not found: ${sourceFile}`); process.exit(1); }
 
-  const result = compile(sourceFile);
+  const result = compile(sourceFile, platform);
 
   console.log('');
   label('▶ AST SUMMARY\n');
@@ -192,12 +234,22 @@ function showHelp() {
 const args = process.argv.slice(2);
 const command = args[0];
 const file = args[1];
-const outDir = args[2];
+let outDir = args[2];
+let platform = 'browser';
+
+// Parse --platform flag
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--platform' && args[i + 1]) {
+    platform = args[i + 1];
+    // Adjust outDir if it was confused with platform
+    if (i === 2) outDir = undefined;
+  }
+}
 
 switch (command) {
-  case 'build': buildCommand(file, outDir); break;
+  case 'build': buildCommand(file, outDir, platform); break;
   case 'run':   runCommand(file); break;
-  case 'check': checkCommand(file); break;
+  case 'check': checkCommand(file, platform); break;
   case 'help':
   case '--help':
   case '-h':

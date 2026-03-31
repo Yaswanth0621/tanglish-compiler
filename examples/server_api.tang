@@ -1,0 +1,59 @@
+# Tanglish Node.js Example: REST API Server
+
+# Data storage (in-memory for demo)
+idigo students = [] aipoindi
+
+# GET all students
+pani getAllStudents(req, res) {
+  res.json({ students: students })
+}
+
+T.get("/api/students", getAllStudents)
+
+# GET student by ID
+pani getStudent(req, res) {
+  idigo id = req.params.id aipoindi
+  idigo student = null aipoindi
+
+  prathi (s lona students) {
+    unte (s.id == id) {
+      student = s aipoindi
+    }
+  }
+
+  unte (student) {
+    res.json({ success: nijam, student: student })
+  }
+  lekapothe {
+    res.status(404).json({ success: abaddam, message: "Student not found" })
+  }
+}
+
+T.get("/api/students/:id", getStudent)
+
+# Create student
+pani createStudent(req, res) {
+  idigo newStudent = {
+    id: students.length + 1,
+    name: req.body.name,
+    grade: req.body.grade
+  } aipoindi
+
+  students.push(newStudent) aipoindi
+  res.json({ success: nijam, student: newStudent })
+}
+
+T.post("/api/students", createStudent)
+
+# Server info
+pani serverInfo(req, res) {
+  res.json({
+    name: "TanglishScript REST API",
+    version: "1.0.0",
+    students: students.length
+  })
+}
+
+T.get("/", serverInfo)
+
+cheppu "REST API server configured!"

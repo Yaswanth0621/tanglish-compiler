@@ -1,0 +1,25 @@
+# Tanglish Node.js Example: Basic HTTP Server
+
+pani helloHandler(req, res) {
+  res.send("Hello from Tanglish Server!")
+}
+
+T.get("/", helloHandler)
+
+pani aboutHandler(req, res) {
+  res.json({ message: "About endpoint", version: "1.0.0" })
+}
+
+T.get("/about", aboutHandler)
+
+pani apiHandler(req, res) {
+  idigo data = {
+    status: "success",
+    data: [1, 2, 3, 4, 5]
+  } aipoindi
+  res.json(data)
+}
+
+T.get("/api/data", apiHandler)
+
+cheppu "Server configured with routes"
