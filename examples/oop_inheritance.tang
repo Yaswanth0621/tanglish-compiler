@@ -1,0 +1,53 @@
+# Tanglish OOP Example: Inheritance
+
+varga Animal {
+  nirmana_pani(name) {
+    vasthu.name = name aipoindi
+  }
+
+  speak() {
+    pampu vasthu.name + " makes a sound" aipoindi
+  }
+
+  getName() {
+    pampu vasthu.name aipoindi
+  }
+}
+
+varga Dog pedhasa Animal {
+  nirmana_pani(name, breed) {
+    vasthu.name = name aipoindi
+    vasthu.breed = breed aipoindi
+  }
+
+  speak() {
+    pampu vasthu.name + " barks!" aipoindi
+  }
+
+  getBreed() {
+    pampu vasthu.breed aipoindi
+  }
+}
+
+varga Cat pedhasa Animal {
+  nirmana_pani(name, color) {
+    vasthu.name = name aipoindi
+    vasthu.color = color aipoindi
+  }
+
+  speak() {
+    pampu vasthu.name + " meows!" aipoindi
+  }
+
+  getColor() {
+    pampu vasthu.color aipoindi
+  }
+}
+
+idigo dog = parinamam Dog("Rex", "Labrador") aipoindi
+dog.speak() aipoindi
+cheppu dog.getName() aipoindi
+
+idigo cat = parinamam Cat("Whiskers", "Orange") aipoindi
+cat.speak() aipoindi
+cheppu cat.getColor() aipoindi

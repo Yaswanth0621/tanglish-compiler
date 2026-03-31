@@ -49,6 +49,11 @@ const KEYWORDS = new Set([
   'lona',        // in/of
   'prayatninchu',// try
   'pattu',       // catch
+  'varga',       // class
+  'nirmana_pani',// constructor
+  'vasthu',      // this
+  'parinamam',   // new
+  'pedhasa',     // extends
 ]);
 
 const BOOLEANS = new Set(['nijam', 'abaddam']);

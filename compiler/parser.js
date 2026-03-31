@@ -85,6 +85,7 @@ class Parser {
         case 'alankaram': return this.parseCssBlock();
         case 'apu':       this.advance(); return { type: 'BreakStmt' };
         case 'munduku':   this.advance(); return { type: 'ContinueStmt' };
+        case 'varga':     return this.parseClassDecl();
         default:
           // unknown keyword — skip
           this.advance();
@@ -213,6 +214,59 @@ class Parser {
     this.expect(TOKEN_TYPES.RPAREN);
     const body = this.parseBlock();
     return { type: 'FunctionDecl', name, params, body };
+  }
+
+  // varga ClassName [pedhasa ParentClass] { nirmana_pani(...) { ... } method() { ... } }
+  parseClassDecl() {
+    this.expect(TOKEN_TYPES.KEYWORD, 'varga');
+    const name = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+
+    let superClass = null;
+    if (this.check(TOKEN_TYPES.KEYWORD, 'pedhasa')) {
+      this.advance();
+      superClass = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+    }
+
+    this.expect(TOKEN_TYPES.LBRACE);
+
+    const methods = [];
+    const properties = [];
+
+    while (!this.check(TOKEN_TYPES.RBRACE) && !this.check(TOKEN_TYPES.EOF)) {
+      this.eatAipoindi();
+      if (this.check(TOKEN_TYPES.RBRACE)) break;
+
+      // Check for constructor or method
+      if (this.check(TOKEN_TYPES.KEYWORD, 'nirmana_pani')) {
+        // Constructor
+        this.advance();
+        this.expect(TOKEN_TYPES.LPAREN);
+        const params = this.parseParams();
+        this.expect(TOKEN_TYPES.RPAREN);
+        const body = this.parseBlock();
+        methods.push({ type: 'MethodDef', name: 'constructor', params, body, isConstructor: true });
+      } else if (this.check(TOKEN_TYPES.IDENTIFIER)) {
+        // Method or property
+        const methodName = this.advance().value;
+        if (this.check(TOKEN_TYPES.LPAREN)) {
+          // It's a method
+          this.advance();
+          const params = this.parseParams();
+          this.expect(TOKEN_TYPES.RPAREN);
+          const body = this.parseBlock();
+          methods.push({ type: 'MethodDef', name: methodName, params, body });
+        } else {
+          // It's a property — could be initialized in constructor
+          properties.push({ name: methodName });
+        }
+      } else {
+        this.advance(); // skip unknown
+      }
+      this.eatAipoindi();
+    }
+
+    this.expect(TOKEN_TYPES.RBRACE);
+    return { type: 'ClassDecl', name, superClass, methods, properties };
   }
 
   // pampu expr aipoindi
@@ -562,6 +616,22 @@ class Parser {
     if (tok.type === TOKEN_TYPES.BOOLEAN) {
       this.advance();
       return { type: 'BooleanLiteral', value: tok.value };
+    }
+
+    // vasthu = this
+    if (tok.type === TOKEN_TYPES.KEYWORD && tok.value === 'vasthu') {
+      this.advance();
+      return { type: 'ThisExpr' };
+    }
+
+    // parinamam = new
+    if (tok.type === TOKEN_TYPES.KEYWORD && tok.value === 'parinamam') {
+      this.advance();
+      const className = this.expect(TOKEN_TYPES.IDENTIFIER).value;
+      this.expect(TOKEN_TYPES.LPAREN);
+      const args = this.parseArgs();
+      this.expect(TOKEN_TYPES.RPAREN);
+      return { type: 'NewExpr', className, args };
     }
 
     if (tok.type === TOKEN_TYPES.IDENTIFIER) {

@@ -1,0 +1,23 @@
+# Tanglish OOP Example: Basic Class
+
+varga Person {
+  nirmana_pani(naam, age) {
+    vasthu.naam = naam aipoindi
+    vasthu.age = age aipoindi
+  }
+
+  getInfo() {
+    pampu "Person: " + vasthu.naam + " (" + vasthu.age + " years)" aipoindi
+  }
+
+  greet() {
+    pampu "Hello, I am " + vasthu.naam aipoindi
+  }
+}
+
+idigo person1 = parinamam Person("Arjun", 25) aipoindi
+cheppu person1.greet() aipoindi
+cheppu person1.getInfo() aipoindi
+
+idigo person2 = parinamam Person("Priya", 23) aipoindi
+cheppu person2.getInfo() aipoindi

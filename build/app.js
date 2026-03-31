@@ -254,48 +254,22 @@
 })(window);
 
 
-let currentVal = "0";
-let operator = "";
-let storedVal = "0";
-function appendNum(num) {
-  if ((currentVal == "0")) {
-    currentVal = num;
-  } else {
-    currentVal = (currentVal + num);
+class Person {
+  constructor(naam, age) {
+  null;
+  naam = naam;
+  null;
+  age = age;
   }
-  updateDisplay();
-}
-function setOp(op) {
-  storedVal = currentVal;
-  operator = op;
-  currentVal = "0";
-}
-function compute() {
-  let a = (storedVal * 1);
-  let b = (currentVal * 1);
-  let res = 0;
-  if ((operator == "+")) {
-    res = (a + b);
+  getInfo() {
+  return (((("Person: " + this.naam) + " (") + this.age) + " years)");
   }
-  if ((operator == "-")) {
-    res = (a - b);
+  greet() {
+  return ("Hello, I am " + this.naam);
   }
-  if ((operator == "*")) {
-    res = (a * b);
-  }
-  if ((operator == "/")) {
-    res = (a / b);
-  }
-  currentVal = (res + "");
-  operator = "";
-  updateDisplay();
 }
-function clearCalc() {
-  currentVal = "0";
-  storedVal = "0";
-  operator = "";
-  updateDisplay();
-}
-function updateDisplay() {
-  T.setText("h2", currentVal);
-}
+let person1 = new Person("Arjun", 25);
+console.log(person1.greet());
+console.log(person1.getInfo());
+let person2 = new Person("Priya", 23);
+console.log(person2.getInfo());

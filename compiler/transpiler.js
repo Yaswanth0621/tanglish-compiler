@@ -57,6 +57,7 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
     switch (node.type) {
       case 'HtmlElement':   this.html.push(this.genHtml(node, 0)); break;
       case 'CssBlock':      this.css.push(this.genCss(node)); break;
+      case 'ClassDecl':     this.js.push(this.genClass(node)); break;
       case 'FunctionDecl':  this.js.push(this.genFunction(node)); break;
       case 'VarDecl':       this.js.push(this.genVarDecl(node)); break;
       case 'Print':         this.js.push(this.genPrint(node)); break;
@@ -179,6 +180,23 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
   }
 
   // ─── JavaScript Generation ───────────────────────────────────────────────────
+  genClass(node) {
+    const superClass = node.superClass ? ` extends ${node.superClass}` : '';
+    let classBody = [];
+
+    for (const method of node.methods) {
+      const params = method.params.join(', ');
+      const body = this.genBlock(method.body);
+      if (method.isConstructor) {
+        classBody.push(`  constructor(${params}) {\n${body}\n  }`);
+      } else {
+        classBody.push(`  ${method.name}(${params}) {\n${body}\n  }`);
+      }
+    }
+
+    return `class ${node.name}${superClass} {\n${classBody.join('\n')}\n}`;
+  }
+
   genFunction(node) {
     const params = node.params.join(', ');
     const body = this.genBlock(node.body);
@@ -280,6 +298,11 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
       case 'BooleanLiteral': return node.value ? 'true' : 'false';
       case 'NullLiteral':    return 'null';
       case 'Identifier':     return node.name;
+      case 'ThisExpr':       return 'this';
+      case 'NewExpr': {
+        const args = node.args.map(a => this.genExpr(a)).join(', ');
+        return `new ${node.className}(${args})`;
+      }
       case 'BinaryExpr':     return `(${this.genExpr(node.left)} ${node.op} ${this.genExpr(node.right)})`;
       case 'UnaryExpr':      return `${node.op}${this.genExpr(node.right)}`;
       case 'PostfixExpr':    return `${this.genExpr(node.expr)}${node.op}`;

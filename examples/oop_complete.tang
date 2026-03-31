@@ -1,0 +1,76 @@
+# Tanglish OOP Example: Complete - Student Management System
+
+varga Student {
+  nirmana_pani(name, rollNo, marks) {
+    vasthu.name = name aipoindi
+    vasthu.rollNo = rollNo aipoindi
+    vasthu.marks = marks aipoindi
+  }
+
+  getDetails() {
+    pampu "Student: " + vasthu.name + " (Roll No: " + vasthu.rollNo + ")" aipoindi
+  }
+
+  getMarks() {
+    pampu vasthu.name + " scored " + vasthu.marks + " marks" aipoindi
+  }
+
+  isPass() {
+    unte (vasthu.marks >= 40) {
+      pampu vasthu.name + " PASSED" aipoindi
+    }
+    lekapothe {
+      pampu vasthu.name + " FAILED" aipoindi
+    }
+  }
+
+  getGrade() {
+    unte (vasthu.marks >= 90) {
+      pampu "A+" aipoindi
+    }
+    lekapothe unte (vasthu.marks >= 80) {
+      pampu "A" aipoindi
+    }
+    lekapothe unte (vasthu.marks >= 70) {
+      pampu "B" aipoindi
+    }
+    lekapothe unte (vasthu.marks >= 60) {
+      pampu "C" aipoindi
+    }
+    lekapothe unte (vasthu.marks >= 50) {
+      pampu "D" aipoindi
+    }
+    lekapothe {
+      pampu "F" aipoindi
+    }
+  }
+}
+
+# Create students
+idigo student1 = parinamam Student("Arjun", 101, 85) aipoindi
+idigo student2 = parinamam Student("Priya", 102, 92) aipoindi
+idigo student3 = parinamam Student("Rajesh", 103, 45) aipoindi
+idigo student4 = parinamam Student("Sophia", 104, 35) aipoindi
+
+# Display student info
+student1.getDetails() aipoindi
+student1.getMarks() aipoindi
+cheppu "Grade: " aipoindi
+student1.getGrade() aipoindi
+student1.isPass() aipoindi
+
+cheppu "---" aipoindi
+
+student2.getDetails() aipoindi
+student2.getMarks() aipoindi
+cheppu "Grade: " aipoindi
+student2.getGrade() aipoindi
+student2.isPass() aipoindi
+
+cheppu "---" aipoindi
+
+student3.getDetails() aipoindi
+student3.getMarks() aipoindi
+cheppu "Grade: " aipoindi
+student3.getGrade() aipoindi
+student3.isPass() aipoindi
