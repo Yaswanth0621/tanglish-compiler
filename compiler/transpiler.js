@@ -303,6 +303,11 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
         const args = node.args.map(a => this.genExpr(a)).join(', ');
         return `new ${node.className}(${args})`;
       }
+      case 'FunctionExpr': {
+        const params = node.params.join(', ');
+        const body = this.genBlock(node.body);
+        return `function(${params}) {\n${body}\n}`;
+      }
       case 'BinaryExpr':     return `(${this.genExpr(node.left)} ${node.op} ${this.genExpr(node.right)})`;
       case 'UnaryExpr':      return `${node.op}${this.genExpr(node.right)}`;
       case 'PostfixExpr':    return `${this.genExpr(node.expr)}${node.op}`;

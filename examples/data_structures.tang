@@ -1,0 +1,51 @@
+# Tanglish Data Structures Example: Object and Array Operations
+
+# Object creation
+idigo person = { name: "Arjun", age: 25, city: "Hyderabad" } aipoindi
+cheppu "Person:" aipoindi
+cheppu person aipoindi
+
+# Nested objects and arrays
+idigo company = {
+  name: "TechCorp",
+  employees: [
+    { name: "Arjun", salary: 50000 },
+    { name: "Priya", salary: 60000 },
+    { name: "Rajesh", salary: 45000 }
+  ],
+  founded: 2015
+} aipoindi
+
+cheppu "Company:" aipoindi
+cheppu company aipoindi
+
+# Array of students with grades
+idigo students = [
+  { name: "Alice", grade: 85 },
+  { name: "Bob", grade: 92 },
+  { name: "Charlie", grade: 78 },
+  { name: "Diana", grade: 88 }
+] aipoindi
+
+cheppu "All Students:" aipoindi
+prathi (student lona students) {
+  cheppu student.name + ": " + student.grade aipoindi
+}
+
+# Get top performers (grade >= 85)
+idigo topGrades = students.filter(pani(s) { pampu s.grade >= 85 aipoindi }) aipoindi
+cheppu "Top Performers:" aipoindi
+prathi (s lona topGrades) {
+  cheppu s.name aipoindi
+}
+
+# Calculate average grade
+idigo totalGrade = students.reduce(pani(sum, s) { pampu sum + s.grade aipoindi }, 0) aipoindi
+idigo avgGrade = totalGrade / students.length aipoindi
+cheppu "Average Grade:" aipoindi
+cheppu avgGrade aipoindi
+
+# Get student names
+idigo names = students.map(pani(s) { pampu s.name aipoindi }) aipoindi
+cheppu "Student Names:" aipoindi
+cheppu names aipoindi

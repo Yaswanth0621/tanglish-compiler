@@ -634,6 +634,21 @@ class Parser {
       return { type: 'NewExpr', className, args };
     }
 
+    // pani = function expression (anonymous function)
+    if (tok.type === TOKEN_TYPES.KEYWORD && tok.value === 'pani') {
+      this.advance();
+      // Optional function name (but usually anonymous)
+      let name = '';
+      if (this.check(TOKEN_TYPES.IDENTIFIER)) {
+        name = this.advance().value;
+      }
+      this.expect(TOKEN_TYPES.LPAREN);
+      const params = this.parseParams();
+      this.expect(TOKEN_TYPES.RPAREN);
+      const body = this.parseBlock();
+      return { type: 'FunctionExpr', name, params, body };
+    }
+
     if (tok.type === TOKEN_TYPES.IDENTIFIER) {
       this.advance();
       return { type: 'Identifier', name: tok.value };

@@ -1,0 +1,33 @@
+# Tanglish Array Methods Example
+
+# Arrays and forEach
+idigo numbers = [1, 2, 3, 4, 5] aipoindi
+cheppu "Original array:" aipoindi
+cheppu numbers aipoindi
+
+# Map - transform each element
+idigo doubled = numbers.map(pani(n) { pampu n * 2 aipoindi }) aipoindi
+cheppu "Doubled:" aipoindi
+cheppu doubled aipoindi
+
+# Filter - keep elements that match condition
+idigo evens = numbers.filter(pani(n) { pampu n % 2 == 0 aipoindi }) aipoindi
+cheppu "Even numbers:" aipoindi
+cheppu evens aipoindi
+
+# Reduce - combine all elements
+idigo sum = numbers.reduce(pani(total, n) { pampu total + n aipoindi }, 0) aipoindi
+cheppu "Sum:" aipoindi
+cheppu sum aipoindi
+
+# String methods
+idigo text = "hello world" aipoindi
+cheppu text.length aipoindi
+cheppu text.toUpperCase() aipoindi
+cheppu text.split(" ") aipoindi
+
+# Array methods
+idigo arr = [1, 2, 3] aipoindi
+cheppu arr.join(",") aipoindi
+cheppu arr.includes(2) aipoindi
+cheppu arr.indexOf(3) aipoindi
