@@ -1,0 +1,21 @@
+# Tanglish Modules Example: Math utilities module
+# This would be saved as math_utils.tang
+
+pani add(a, b) {
+  pampu a + b aipoindi
+}
+
+pani multiply(a, b) {
+  pampu a * b aipoindi
+}
+
+pani divide(a, b) {
+  pampu a / b aipoindi
+}
+
+pani power(base, exponent) {
+  pampu base ** exponent aipoindi
+}
+
+# Export the functions
+ivvu add, multiply, divide, power aipoindi

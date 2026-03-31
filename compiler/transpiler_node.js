@@ -110,6 +110,8 @@ const T = {
       case 'ForStmt':       this.js.push(this.genFor(node)); break;
       case 'WhileStmt':     this.js.push(this.genWhile(node)); break;
       case 'ExprStmt':      this.js.push(this.genExpr(node.expr) + ';'); break;
+      case 'ImportStmt':    this.js.push(this.genImport(node)); break;
+      case 'ExportStmt':    this.js.push(this.genExport(node)); break;
       default: break;
     }
   }
@@ -135,6 +137,27 @@ const T = {
     const params = node.params.join(', ');
     const body = this.genBlock(node.body);
     return `function ${node.name}(${params}) {\n${body}\n}`;
+  }
+
+  genImport(node) {
+    // For Node.js, use CommonJS require() pattern
+    if (node.specifiers && node.specifiers.length > 0) {
+      // teesuko { x, y } from "./module" -> const { x, y } = require('./module');
+      return `const { ${node.specifiers.join(', ')} } = require('${node.source}');`;
+    } else if (node.source) {
+      // teesuko "./module" -> require('./module');
+      return `require('${node.source}');`;
+    }
+    return '';
+  }
+
+  genExport(node) {
+    // For Node.js, use CommonJS module.exports pattern
+    if (node.exports && node.exports.length > 0) {
+      // ivvu { x, y } -> module.exports = { x, y };
+      return `module.exports = { ${node.exports.join(', ')} };`;
+    }
+    return '';
   }
 
   genBlock(block, depth = 1) {

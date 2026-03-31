@@ -65,6 +65,8 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
       case 'ForStmt':       this.js.push(this.genFor(node)); break;
       case 'WhileStmt':     this.js.push(this.genWhile(node)); break;
       case 'ExprStmt':      this.js.push(this.genExpr(node.expr) + ';'); break;
+      case 'ImportStmt':    this.js.push(this.genImport(node)); break;
+      case 'ExportStmt':    this.js.push(this.genExport(node)); break;
       default: break;
     }
   }
@@ -201,6 +203,24 @@ ${hasJs ? '  <script src="app.js"></script>' : ''}
     const params = node.params.join(', ');
     const body = this.genBlock(node.body);
     return `function ${node.name}(${params}) {\n${body}\n}`;
+  }
+
+  genImport(node) {
+    // Generate ES6 import statement
+    if (node.specifiers && node.specifiers.length > 0) {
+      return `import { ${node.specifiers.join(', ')} } from '${node.source}';`;
+    } else if (node.source) {
+      return `import '${node.source}';`;
+    }
+    return '';
+  }
+
+  genExport(node) {
+    // Generate ES6 export statement
+    if (node.exports && node.exports.length > 0) {
+      return `export { ${node.exports.join(', ')} };`;
+    }
+    return '';
   }
 
   genBlock(block, depth = 1) {

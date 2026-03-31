@@ -254,18 +254,12 @@
 })(window);
 
 
-let age = 25;
-let name = "Arjun";
-let isStudent = true;
-let scores = [85, 90, 78];
-console.log(("Name: " + name));
-console.log(("Age: " + age));
-console.log(("Is Student: " + isStudent));
-console.log(("Scores: " + scores));
-function calculateAge(birthYear) {
-  return (2025 - birthYear);
-}
-let currentAge = calculateAge(2000);
-console.log(("Calculated Age: " + currentAge));
-let person = { "name": "Priya", "age": 23, "city": "Hyderabad" };
-console.log(person);
+import { add, multiply, divide } from './module_math';
+let result1 = add(10, 5);
+console.log(("10 + 5 = " + result1));
+let result2 = multiply(4, 7);
+console.log(("4 * 7 = " + result2));
+let result3 = divide(20, 4);
+console.log(("20 / 4 = " + result3));
+let total = add(result1, result2);
+console.log(("Total: " + total));

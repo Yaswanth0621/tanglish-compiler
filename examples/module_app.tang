@@ -1,0 +1,18 @@
+# Tanglish Modules Example: Using imported modules
+# This imports functions from math_utils.tang
+
+teesuko { add, multiply, divide } from "./module_math" aipoindi
+
+# Use the imported functions
+idigo result1: sankhya = add(10, 5) aipoindi
+cheppu "10 + 5 = " + result1 aipoindi
+
+idigo result2: sankhya = multiply(4, 7) aipoindi
+cheppu "4 * 7 = " + result2 aipoindi
+
+idigo result3: sankhya = divide(20, 4) aipoindi
+cheppu "20 / 4 = " + result3 aipoindi
+
+# Calculate total
+idigo total: sankhya = add(result1, result2) aipoindi
+cheppu "Total: " + total aipoindi

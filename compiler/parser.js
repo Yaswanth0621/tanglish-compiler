@@ -86,6 +86,8 @@ class Parser {
         case 'apu':       this.advance(); return { type: 'BreakStmt' };
         case 'munduku':   this.advance(); return { type: 'ContinueStmt' };
         case 'varga':     return this.parseClassDecl();
+        case 'teesuko':   return this.parseImport();
+        case 'ivvu':      return this.parseExport();
         default:
           // unknown keyword — skip
           this.advance();
@@ -285,6 +287,71 @@ class Parser {
     }
     this.eatAipoindi();
     return { type: 'ReturnStmt', value };
+  }
+
+  // teesuko moduleName aipoindi or teesuko { x, y } from moduleName aipoindi
+  parseImport() {
+    this.expect(TOKEN_TYPES.KEYWORD, 'teesuko');
+
+    let specifiers = [];
+    let source = null;
+
+    // Could be: teesuko "./utils" or teesuko { x, y } from "./math"
+    if (this.check(TOKEN_TYPES.STRING)) {
+      // teesuko "./path" pattern
+      source = this.advance().value;
+    } else if (this.check(TOKEN_TYPES.LBRACE)) {
+      // teesuko { x, y } from "./module" pattern
+      this.advance(); // consume {
+      if (!this.check(TOKEN_TYPES.RBRACE)) {
+        specifiers.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+        while (this.check(TOKEN_TYPES.COMMA)) {
+          this.advance();
+          specifiers.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+        }
+      }
+      this.expect(TOKEN_TYPES.RBRACE);
+      // Expect "from" keyword (as IDENTIFIER)
+      if (this.check(TOKEN_TYPES.IDENTIFIER) && this.current().value === 'from') {
+        this.advance();
+      }
+      source = this.expect(TOKEN_TYPES.STRING).value;
+    }
+
+    this.eatAipoindi();
+    return { type: 'ImportStmt', specifiers, source };
+  }
+
+  // ivvu name aipoindi or ivvu { x, y } aipoindi or ivvu x, y, z aipoindi
+  parseExport() {
+    this.expect(TOKEN_TYPES.KEYWORD, 'ivvu');
+
+    let exports = [];
+
+    if (this.check(TOKEN_TYPES.LBRACE)) {
+      // ivvu { x, y } pattern
+      this.advance(); // consume {
+      if (!this.check(TOKEN_TYPES.RBRACE)) {
+        exports.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+        while (this.check(TOKEN_TYPES.COMMA)) {
+          this.advance();
+          exports.push(this.expect(TOKEN_TYPES.IDENTIFIER).value);
+        }
+      }
+      this.expect(TOKEN_TYPES.RBRACE);
+    } else if (this.check(TOKEN_TYPES.IDENTIFIER)) {
+      // ivvu name or ivvu x, y, z pattern
+      exports.push(this.advance().value);
+      while (this.check(TOKEN_TYPES.COMMA)) {
+        this.advance();
+        if (this.check(TOKEN_TYPES.IDENTIFIER)) {
+          exports.push(this.advance().value);
+        }
+      }
+    }
+
+    this.eatAipoindi();
+    return { type: 'ExportStmt', exports };
   }
 
   // petti tagName [click ayithe fn()] { children }

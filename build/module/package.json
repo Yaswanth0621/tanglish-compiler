@@ -1,0 +1,14 @@
+{
+  "name": "module_math-server",
+  "version": "1.0.0",
+  "description": "TanglishScript Node.js Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0"
+  },
+  "author": "TanglishScript",
+  "license": "MIT"
+}
